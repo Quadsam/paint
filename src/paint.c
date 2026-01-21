@@ -102,7 +102,9 @@ static void parse_args(int argc, char **argv)
 		{
 		case 'h':
 		case 'H':
-			assert(0 && "Error: Help not implimented");
+			printf("Usage: %s [OPTION]\n\n", PACKAGE_NAME);
+			printf("Options:\n");
+			printf("  -V,  Display current version.\n");
 			exit(EXIT_SUCCESS);
 		case 'V':
 			printf("%s v%s\n", PACKAGE_NAME, PACKAGE_VERSION);
