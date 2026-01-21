@@ -6,6 +6,10 @@ PREFIX  := /usr/local
 
 all: paint
 
+install: paint
+	install -Dvm755 $^ $(DESTDIR)$(PREFIX)/bin/$^
+	strip $(DESTDIR)$(PREFIX)/bin/$^
+
 clean:
 	$(RM) -fv paint *.o dist/
 
