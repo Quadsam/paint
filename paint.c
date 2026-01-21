@@ -16,18 +16,19 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-
-#include <stdio.h>
-#include <SDL2/SDL.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <math.h>
+#include <SDL2/SDL.h>
 
 #define WINDOW_WIDTH    900
-#define WINDOW_HEIGHT   300
+#define WINDOW_HEIGHT   600
+
+// Starting brush size and color
 #define START_RADIUS    20
 #define START_COLOR     0xFF0000
 
-#define TARGET_FPS      60
+#define TARGET_FPS      75
 #define COLOR_RECT_SIZE 30
 
 Uint32 color = START_COLOR;
@@ -35,11 +36,10 @@ Uint32 color_pallete[] = {	0x000000, 0xFFFFFF, 0xFF0000, 0x00FF00,
 							0x0000FF, 0xFFFF00, 0x00FFFF, 0xFF00FF	};
 const int color_pallete_size = 8;
 
-bool inside_color_palette(int x, int y)
+// Check if the cursor is inside the color palette
+static bool inside_color_palette(int x, int y)
 {
-	if (x <= color_pallete_size*COLOR_RECT_SIZE && y <= COLOR_RECT_SIZE)
-		return true;
-	return false;
+	return (x <= color_pallete_size*COLOR_RECT_SIZE && y <= COLOR_RECT_SIZE);
 }
 
 // Check if user clicked color palette and updates color if so
@@ -47,12 +47,10 @@ static void check_color_palette_chosen(int x, int y)
 {
 	int i;
 	if (inside_color_palette(x, y)) {
-		// mouse is inside x, y range of color palette
+		// Mouse is inside x, y range of color palette
 		i = x / COLOR_RECT_SIZE;
 		color = color_pallete[i];
 	}
-
-
 	return;
 }
 
@@ -73,25 +71,26 @@ static void draw_palette(SDL_Surface *surface, Uint32 *colors, int size)
 // Draws a circle at center coordinates with given radius and color
 static void draw_circle(SDL_Surface *surface, int x_center, int y_center, int radius, Uint32 color)
 {
-	SDL_Rect pixel = { 0, 0, 1, 1 };
 	int x, y;
-	for(x = x_center - radius; x < x_center + radius; x++)
-	{
-		for (y = y_center - radius; y < y_center + radius; y++)
-		{
-			// Is this pixel part of the circle
-			int distance_from_center = sqrt(
-				pow(x - x_center, 2) + pow(y - y_center, 2));
+	int distance_from_center;
+	SDL_Rect pixel = { 0, 0, 1, 1 };
+
+	for (x = x_center - radius; x < x_center + radius; x++) {
+		for (y = y_center - radius; y < y_center + radius; y++) {
+			// Is this pixel part of the circle?
+			distance_from_center = sqrt(pow(x - x_center, 2) + pow(y - y_center, 2));
 			if (distance_from_center < radius) {
 				// Part of the circle
 				pixel.x = x;
 				pixel.y = y;
-				SDL_FillRect(surface, &pixel, color);
+				if (SDL_FillRect(surface, &pixel, color) != 0)
+					return;
 			}
 		}
 	}
 }
 
+// Entry point
 int main(void)
 {
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {

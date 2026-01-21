@@ -9,12 +9,6 @@ all: paint
 clean:
 	$(RM) -fv paint *.o dist/
 
-dist: paint
-	install -Dm755 $^ $@/$(PREFIX)/bin/$^
-
-splint: paint.c
-	splint +matchanyintegral $^
-
 paint: paint.o
 	$(CC) $(LDFLAGS) $(LDLIBS) -o $@ $^
 
