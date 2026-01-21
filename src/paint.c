@@ -16,10 +16,13 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
+#include <unistd.h>
 #include <SDL2/SDL.h>
+#include "config.h"
 
 #define WINDOW_WIDTH    900
 #define WINDOW_HEIGHT   600
@@ -90,9 +93,37 @@ static void draw_circle(SDL_Surface *surface, int x_center, int y_center, int ra
 	}
 }
 
-// Entry point
-int main(void)
+static void parse_args(int argc, char **argv)
 {
+	int c;
+	while ((c = getopt(argc, argv, ":hHV")) != -1)
+	{
+		switch (c)
+		{
+		case 'h':
+		case 'H':
+			printf("Usage: %s [OPTION]\n\n", PACKAGE_NAME);
+			printf("Options:\n");
+			printf("  -V,  Display current version.\n");
+			exit(EXIT_SUCCESS);
+		case 'V':
+			printf("%s v%s\n", PACKAGE_NAME, PACKAGE_VERSION);
+			exit(EXIT_SUCCESS);
+		case '?':
+			printf("Illegal option -- '-%c'\n", optopt);
+			exit(EXIT_FAILURE);
+		case ':':
+			printf("Missing argument for -- '-%c'\n", optopt);
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+
+// Entry point
+int main(int argc, char *argv[])
+{
+	parse_args(argc, argv);
+
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 		return 1;
