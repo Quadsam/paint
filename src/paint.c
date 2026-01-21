@@ -22,6 +22,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <SDL2/SDL.h>
+#include "config.h"
 
 #define WINDOW_WIDTH    900
 #define WINDOW_HEIGHT   600
@@ -104,7 +105,7 @@ static void parse_args(int argc, char **argv)
 			assert(0 && "Error: Help not implimented");
 			exit(EXIT_SUCCESS);
 		case 'V':
-			assert(0 && "Error: Version not implimented");
+			printf("%s v%s\n", PACKAGE_NAME, PACKAGE_VERSION);
 			exit(EXIT_SUCCESS);
 		case '?':
 			printf("Illegal option -- '-%c'\n", optopt);
