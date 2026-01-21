@@ -7,7 +7,7 @@ PREFIX  := /usr/local
 all: paint
 
 clean:
-	$(RM) -v paint *.o dist/
+	$(RM) -fv paint *.o dist/
 
 dist: paint
 	install -Dm755 $^ $@/$(PREFIX)/bin/$^
