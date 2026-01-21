@@ -149,11 +149,7 @@ int main(void)
 				draw = false;
 				break;
 			case SDL_MOUSEWHEEL:
-				if (event.wheel.direction == SDL_MOUSEWHEEL_NORMAL) {
-					brush_size += 2;
-				} else {
-					brush_size -= 2;
-				}
+				brush_size += event.wheel.preciseY;
 				break;
 
 			}
