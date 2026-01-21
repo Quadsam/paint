@@ -114,7 +114,7 @@ int main(void)
 	SDL_Surface *surface = SDL_GetWindowSurface(window);
 
 	int x, y;
-	int brush_size = START_RADIUS;
+	size_t brush_size = START_RADIUS;
 	bool draw = false;
 	bool running = true;
 	float delay_milis = (1.0 / TARGET_FPS) * 1000;
@@ -150,6 +150,10 @@ int main(void)
 				break;
 			case SDL_MOUSEWHEEL:
 				brush_size += event.wheel.preciseY;
+				if (brush_size < 1)
+					brush_size++;
+				printf("%ld\n", brush_size);
+
 				break;
 
 			}
