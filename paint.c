@@ -25,7 +25,7 @@
 #define WINDOW_WIDTH    900
 #define WINDOW_HEIGHT   300
 #define START_RADIUS    20
-#define START_COLOR     0x00FFFF
+#define START_COLOR     0xFF0000
 
 #define TARGET_FPS      60
 #define COLOR_RECT_SIZE 30
@@ -37,11 +37,9 @@ const int color_pallete_size = 8;
 
 bool inside_color_palette(int x, int y)
 {
-	if (x <= color_pallete_size*COLOR_RECT_SIZE && y <= COLOR_RECT_SIZE) {
+	if (x <= color_pallete_size*COLOR_RECT_SIZE && y <= COLOR_RECT_SIZE)
 		return true;
-	} else {
-		return false;
-	}
+	return false;
 }
 
 // Check if user clicked color palette and updates color if so
@@ -120,7 +118,7 @@ int main(void)
 	bool draw = false;
 	bool running = true;
 	float delay_milis = (1.0 / TARGET_FPS) * 1000;
-	Uint32 color = START_COLOR;
+	// Uint32 color = START_COLOR;
 
 	draw_palette(surface, color_pallete, 8);
 	SDL_UpdateWindowSurface(window);
@@ -144,13 +142,10 @@ int main(void)
 				x = event.motion.x;
 				y = event.motion.y;
 				check_color_palette_chosen(x, y);
-				if(inside_color_palette(x, y) == false) {
-					printf("Drawing now\n");
+				if(inside_color_palette(x, y) == false)
 					draw = true;
-				}
 				break;
 			case SDL_MOUSEBUTTONUP:
-				printf("Stopped drawing\n");
 				draw = false;
 				break;
 
