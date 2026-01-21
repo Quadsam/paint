@@ -114,7 +114,7 @@ int main(void)
 	SDL_Surface *surface = SDL_GetWindowSurface(window);
 
 	int x, y;
-	int radius = START_RADIUS;
+	int brush_size = START_RADIUS;
 	bool draw = false;
 	bool running = true;
 	float delay_milis = (1.0 / TARGET_FPS) * 1000;
@@ -148,12 +148,19 @@ int main(void)
 			case SDL_MOUSEBUTTONUP:
 				draw = false;
 				break;
+			case SDL_MOUSEWHEEL:
+				if (event.wheel.direction == SDL_MOUSEWHEEL_NORMAL) {
+					brush_size += 2;
+				} else {
+					brush_size -= 2;
+				}
+				break;
 
 			}
 
 		}
 		if (draw) {
-			draw_circle(surface, x, y, radius, color);
+			draw_circle(surface, x, y, brush_size, color);
 			SDL_UpdateWindowSurface(window);
 			SDL_Delay(delay_milis);
 		}
