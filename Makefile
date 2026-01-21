@@ -1,11 +1,16 @@
 CFLAGS  += `pkg-config --cflags sdl2` -Wall -Wextra -Werror -pedantic -ggdb 
 LDFLAGS += `pkg-config --libs-only-other sdl2`
 LDLIBS  += `pkg-config --libs-only-l sdl2` -lm
+PREFIX  := /usr/local
+
 
 all: paint
 
 clean:
-	$(RM) -v paint *.o
+	$(RM) -v paint *.o dist/
+
+dist: paint
+	install -Dm755 $^ $@/$(PREFIX)/bin/$^
 
 splint: paint.c
 	splint +matchanyintegral $^
