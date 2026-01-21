@@ -118,7 +118,6 @@ int main(void)
 	bool draw = false;
 	bool running = true;
 	float delay_milis = (1.0 / TARGET_FPS) * 1000;
-	// Uint32 color = START_COLOR;
 
 	draw_palette(surface, color_pallete, 8);
 	SDL_UpdateWindowSurface(window);
@@ -152,7 +151,6 @@ int main(void)
 				brush_size += event.wheel.preciseY;
 				if (brush_size < 1)
 					brush_size++;
-
 				break;
 
 			}
@@ -161,9 +159,9 @@ int main(void)
 		if (draw) {
 			draw_circle(surface, x, y, brush_size, color);
 			SDL_UpdateWindowSurface(window);
-			SDL_Delay(delay_milis);
 		}
 		draw_palette(surface, color_pallete, color_pallete_size);
+		SDL_Delay(delay_milis);
 	}
 	// Close and destroy the window
 	SDL_DestroyWindow(window);
