@@ -16,9 +16,11 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#include <assert.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <math.h>
+#include <unistd.h>
 #include <SDL2/SDL.h>
 
 #define WINDOW_WIDTH    900
@@ -90,9 +92,35 @@ static void draw_circle(SDL_Surface *surface, int x_center, int y_center, int ra
 	}
 }
 
-// Entry point
-int main(void)
+static void parse_args(int argc, char **argv)
 {
+	int c;
+	while ((c = getopt(argc, argv, ":hHV")) != -1)
+	{
+		switch (c)
+		{
+		case 'h':
+		case 'H':
+			assert(0 && "Error: Help not implimented");
+			exit(EXIT_SUCCESS);
+		case 'V':
+			assert(0 && "Error: Version not implimented");
+			exit(EXIT_SUCCESS);
+		case '?':
+			printf("Illegal option -- '-%c'\n", optopt);
+			exit(EXIT_FAILURE);
+		case ':':
+			printf("Missing argument for -- '-%c'\n", optopt);
+			exit(EXIT_FAILURE);
+		}
+	}
+}
+
+// Entry point
+int main(int argc, char *argv[])
+{
+	parse_args(argc, argv);
+
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
 		return 1;
