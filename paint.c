@@ -152,7 +152,6 @@ int main(void)
 				brush_size += event.wheel.preciseY;
 				if (brush_size < 1)
 					brush_size++;
-				printf("%ld\n", brush_size);
 
 				break;
 
