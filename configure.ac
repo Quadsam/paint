@@ -1,5 +1,5 @@
 AC_PREREQ([2.71])
-AC_INIT([paint],[1.0.0],[bugs@quadsam.com])
+AC_INIT([paint],[m4_esyscmd_s([git describe --tags])],[bugs@quadsam.com])
 AC_CONFIG_SRCDIR([src/paint.c])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_AUX_DIR([build-aux])

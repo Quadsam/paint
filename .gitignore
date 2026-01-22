@@ -1,5 +1,5 @@
-autom4te.cache
-build-aux
+autom4te.cache/
+build-aux/
 src/.deps
 config.*
 *.in
