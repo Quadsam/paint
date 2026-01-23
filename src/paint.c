@@ -39,14 +39,22 @@ Uint32 color_pallete[] = {	0x000000, 0xFFFFFF, 0xFF0000, 0x00FF00,
 							0x0000FF, 0xFFFF00, 0x00FFFF, 0xFF00FF	};
 const int color_pallete_size = 8;
 
+// static void check_button(Uint8 button)
+// {
+// 	printf("%x\n", button);
+// 	return;
+// }
+
 // Check if the cursor is inside the color palette
-static bool inside_color_palette(int x, int y)
+static bool
+inside_color_palette(int x, int y)
 {
 	return (x <= color_pallete_size*COLOR_RECT_SIZE && y <= COLOR_RECT_SIZE);
 }
 
 // Check if user clicked color palette and updates color if so
-static void check_color_palette_chosen(int x, int y)
+static void
+check_color_palette_chosen(int x, int y)
 {
 	int i;
 	if (inside_color_palette(x, y)) {
@@ -57,22 +65,9 @@ static void check_color_palette_chosen(int x, int y)
 	return;
 }
 
-// Draws the color palette consiting of size elements of colors
-static void draw_palette(SDL_Surface *surface, Uint32 *colors, int size)
-{
-	int i;
-	for(i = 0; i < size; i++)
-	{
-		SDL_Rect color_rect = { i*COLOR_RECT_SIZE, 0, COLOR_RECT_SIZE, COLOR_RECT_SIZE };
-		if (SDL_FillRect(surface, &color_rect, colors[i]) != 0) {
-			SDL_Log("Unable to fill rect: %s", SDL_GetError());
-			return ;
-		}
-	}
-}
-
 // Draws a circle at center coordinates with given radius and color
-static void draw_circle(SDL_Surface *surface, int x_center, int y_center, int radius, Uint32 color)
+static void
+draw_circle(SDL_Surface *surface, int x_center, int y_center, int radius, Uint32 color)
 {
 	int x, y;
 	int distance_from_center;
@@ -93,11 +88,26 @@ static void draw_circle(SDL_Surface *surface, int x_center, int y_center, int ra
 	}
 }
 
-static void parse_args(int argc, char **argv)
+
+// Draws the color palette consiting of size elements of colors
+static void
+draw_palette(SDL_Surface *surface, Uint32 *colors, int size)
+{
+	for(int i = 0; i < size; i++)
+	{
+		SDL_Rect color_rect = { i*COLOR_RECT_SIZE, 0, COLOR_RECT_SIZE, COLOR_RECT_SIZE };
+		if (SDL_FillRect(surface, &color_rect, colors[i]) != 0) {
+			SDL_Log("Unable to fill rect: %s", SDL_GetError());
+			return ;
+		}
+	}
+}
+
+static void
+parse_args(int argc, char **argv)
 {
 	int c;
 	while ((c = getopt(argc, argv, ":hHV")) != -1)
-	{
 		switch (c)
 		{
 		case 'h':
@@ -116,46 +126,39 @@ static void parse_args(int argc, char **argv)
 			printf("Missing argument for -- '-%c'\n", optopt);
 			exit(EXIT_FAILURE);
 		}
-	}
 }
 
 // Entry point
 int main(int argc, char *argv[])
 {
+	int x, y;
+	bool draw = false;
+	SDL_Window *window;
+	bool running = true;
+	SDL_Surface *surface;
+	size_t brush_size = START_RADIUS;
+	float delay_milis = (1.0 / TARGET_FPS) * 1000;
+
 	parse_args(argc, argv);
 
+	// Init SDL and create a window
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
 		SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
-		return 1;
+		exit(EXIT_FAILURE);
 	}
-
-	SDL_Window *window = SDL_CreateWindow(
-		"Ultra Pain",
-		SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-		WINDOW_WIDTH, WINDOW_HEIGHT,
-		0
- 	);
-
+	window = SDL_CreateWindow("Paint", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, WINDOW_WIDTH, WINDOW_HEIGHT, 0);
 	if (window == NULL) {
 		SDL_LogError(SDL_LOG_CATEGORY_ERROR, "Could not create window: %s\n", SDL_GetError());
 		return 1;
 	}
+	surface = SDL_GetWindowSurface(window);
 
-	SDL_Surface *surface = SDL_GetWindowSurface(window);
-
-	int x, y;
-	size_t brush_size = START_RADIUS;
-	bool draw = false;
-	bool running = true;
-	float delay_milis = (1.0 / TARGET_FPS) * 1000;
 
 	draw_palette(surface, color_pallete, 8);
 	SDL_UpdateWindowSurface(window);
 	while (running)
 	{
-
 		SDL_Event event;
-
 		while (SDL_PollEvent(&event))
 		{
 			switch (event.type)
@@ -168,23 +171,25 @@ int main(int argc, char *argv[])
 				y = event.motion.y;
 				break;
 			case SDL_MOUSEBUTTONDOWN:
-				x = event.motion.x;
-				y = event.motion.y;
-				check_color_palette_chosen(x, y);
-				if(inside_color_palette(x, y) == false)
-					draw = true;
+				x = event.button.x;
+				y = event.button.y;
+				Uint8 button = event.button.button;
+				if (button == 0x1) {
+					check_color_palette_chosen(x, y);
+				} else if (button == 0x3) {
+					color = 0x000000;
+				}
+				if(inside_color_palette(x, y) == false) draw = true;
+
 				break;
 			case SDL_MOUSEBUTTONUP:
 				draw = false;
 				break;
 			case SDL_MOUSEWHEEL:
 				brush_size += event.wheel.preciseY;
-				if (brush_size < 1)
-					brush_size++;
+				if (brush_size < 1) brush_size++;
 				break;
-
 			}
-
 		}
 		if (draw) {
 			draw_circle(surface, x, y, brush_size, color);
@@ -193,10 +198,7 @@ int main(int argc, char *argv[])
 		draw_palette(surface, color_pallete, color_pallete_size);
 		SDL_Delay(delay_milis);
 	}
-	// Close and destroy the window
 	SDL_DestroyWindow(window);
-
-	// Clean up
 	SDL_Quit();
 	return 0;
 }
